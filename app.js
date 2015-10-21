@@ -78,15 +78,25 @@ function loadItems() {
         return;
       }
       var data = JSON.parse(resp.body);
-      app.set('items_by_id', data.data);
-      console.log('Items loaded (' + Object.keys(app.get('items_by_id')).length + ').');
+      var itemMap = data.data;
+      app.set('items_by_id', itemMap);
+      var itemKeys = Object.keys(itemMap);
+      var orderedItems = [];
+      itemKeys.sort();
+      for(var a = 0; a < itemKeys.length; a++) {
+        orderedItems.push(itemMap[itemKeys[a]]);
+      }
+      app.set('ordered_items', orderedItems);
+      console.log('Items loaded (' + app.get('ordered_items').length + ').');
       return;
     });
 }
 
 function setup() {
   var champions = require('./routes/champions')(app);
+  var items = require('./routes/items')(app);
   app.use('/champions', champions);
+  app.use('/items', items);
 
   // catch 404 and forward to error handler
   app.use(function(req, res, next) {

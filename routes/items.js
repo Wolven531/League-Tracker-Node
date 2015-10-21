@@ -5,10 +5,10 @@ var router = express.Router();
 
 module.exports = function(app){
   router.get('/', function(req, res, next) {
-    res.render('champions', {
-      title: 'Champions',
+    res.render('items', {
+      title: 'Items',
       version: app.get('dragon_version'),
-      champs: app.get('ordered_champions')
+      items: app.get('ordered_items')
     });
     return;
   });
