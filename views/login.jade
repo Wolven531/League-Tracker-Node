@@ -1,0 +1,10 @@
+extends layout
+
+block content
+  h1
+    | #{title}
+  div
+    form(method="POST", action="/login")
+      input(type="text", name="league_name", id="league_name")
+      br
+      input(type="submit", value="Register")

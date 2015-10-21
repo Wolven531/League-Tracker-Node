@@ -95,8 +95,10 @@ function loadItems() {
 function setup() {
   var champions = require('./routes/champions')(app);
   var items = require('./routes/items')(app);
+  var login = require('./routes/login')(app);
   app.use('/champions', champions);
   app.use('/items', items);
+  app.use('/login', login);
 
   // catch 404 and forward to error handler
   app.use(function(req, res, next) {
