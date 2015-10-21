@@ -8,7 +8,10 @@ var router = express.Router();
 module.exports = function(app){
   router.get('/', function(req, res, next) {
     res.render('login', {
-      title: 'Register'
+      title: 'Register',
+      users: userStore.users.map(function(curr){
+        return {username: curr.username};
+      })
     });
     return;
   });

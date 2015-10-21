@@ -3,8 +3,14 @@ extends layout
 block content
   h1
     | #{title}
+  h2 Add New User
   div
     form(method="POST", action="/login")
       input(type="text", name="league_name", id="league_name")
       br
       input(type="submit", value="Register")
+  h2 Current Users
+  div
+    ul
+      each user in users
+        li=user.username
