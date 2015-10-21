@@ -1,0 +1,36 @@
+extends layout
+
+block content
+  h1
+    | #{title} (#{champs.length})
+  table
+    tr
+      th
+        | Image
+      th
+        | Name
+      th
+        | Tags
+      th
+        | Passive
+      th(colspan="4")
+        | Skills
+    each champ in champs
+      tr.champ-row
+        td.champ-img
+          img(src="//ddragon.leagueoflegends.com/cdn/" + version + "/img/champion/" + champ.image.full)
+        td
+          p=champ.name
+          p.champ-title=champ.title
+        td
+          ul
+            each tag in champ.tags
+              li=tag
+        td.passive
+          p.skill-name
+            | #{champ.passive.name}
+          img(src="//ddragon.leagueoflegends.com/cdn/" + version + "/img/passive/" + champ.passive.image.full)
+        each spell in champ.spells
+          td.skill
+            p.skill-name=spell.name
+            img(src="//ddragon.leagueoflegends.com/cdn/" + version + "/img/spell/" + spell.image.full)
