@@ -8,7 +8,7 @@ var bodyParser = require('body-parser');
 var http = require('http');
 var Promise = require('promise');
 var request = Promise.denodeify(require('request'));
-var passwords = require('passwords');
+var passwords = require('./passwords');
 
 var app = express();
 app.set('port', process.env.PORT || '3000');
