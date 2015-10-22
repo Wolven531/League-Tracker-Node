@@ -28,5 +28,5 @@ build/Release
 node_modules
 
 # API Keys and Passwords
-#passwords.json
+passwords.json
 
