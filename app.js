@@ -8,12 +8,13 @@ var bodyParser = require('body-parser');
 var http = require('http');
 var Promise = require('promise');
 var request = Promise.denodeify(require('request'));
+var passwords = require('passwords');
 
 var app = express();
 app.set('port', process.env.PORT || '3000');
 app.set('views', path.join(__dirname, 'views'));// view engine setup
 app.set('view engine', 'jade');// view engine setup
-app.set('api_key', '5ced0814-a66c-4d62-a7e7-291b0b32aa8c');
+app.set('api_key', passwords.riot_api_key);
 app.set('api_host', 'https://global.api.pvp.net/api/lol/static-data/na/');
 app.set('api_version', 'v1.2');
 // uncomment after placing your favicon in /public
