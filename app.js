@@ -59,13 +59,17 @@ function loadChampions() {
         return;
       }
       var data = JSON.parse(resp.body);
-      var champs = data.data;
+      var champs = data.data;// comes in mapped by champ name
+      var champMap = {};
       var champKeys = Object.keys(champs);
       var orderedChamps = [];
       champKeys.sort();
       for(var a = 0; a < champKeys.length; a++) {
-        orderedChamps.push(champs[champKeys[a]]);
+        var champ = champs[champKeys[a]];
+        orderedChamps.push(champ);
+        champMap[champ.id] = champ;
       }
+      app.set('champions_by_id', champMap);
       app.set('ordered_champions', orderedChamps)
       console.log('Champions loaded (' + app.get('ordered_champions').length + ').');
       return;
@@ -82,7 +86,7 @@ function loadItems() {
         return;
       }
       var data = JSON.parse(resp.body);
-      var itemMap = data.data;
+      var itemMap = data.data;// comes in mapped by item ID
       app.set('items_by_id', itemMap);
       var itemKeys = Object.keys(itemMap);
       var orderedItems = [];

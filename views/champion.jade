@@ -1,0 +1,19 @@
+extends layout
+
+block content
+  h1
+    | #{title}, <span class="champ-title">#{champion.title}</span>
+  div
+    img(src="//ddragon.leagueoflegends.com/cdn/" + version + "/img/champion/" + champion.image.full)
+  h3
+    | Lore
+  div
+    | !{champion.lore}
+  h3
+    | Skins
+  ul.skin-list
+    each skin in champion.skins
+      li
+        div.skin-title
+          | #{skin.name}
+        img.champion-skin(src="//ddragon.leagueoflegends.com/cdn/img/champion/splash/" + champion.name + "_" + skin.num + ".jpg")

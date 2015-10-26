@@ -12,5 +12,16 @@ module.exports = function(app){
     });
     return;
   });
+
+  router.get('/:champion_id', function(req, res, next) {
+    var champ = app.get('champions_by_id')[req.params.champion_id];
+    //champ.lore = champ.lore.replace(/<br>/g, '<p>&nbsp;</p>');
+    res.render('champion', {
+      title: champ.name,
+      version: app.get('dragon_version'),
+      champion: champ
+    });
+  });
+
   return router;
 };

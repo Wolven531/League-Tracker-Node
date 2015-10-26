@@ -41,8 +41,19 @@ p.skill-name {
   width: 125px;
 }
 
-p.champ-title {
+.champ-title,
+.skin-title {
   text-transform: capitalize;
+}
+
+ul.skin-list li {
+  display: inline-block;
+  width: 205px;
+  
+}
+
+img.champion-skin {
+  width: 200px;
 }
 
 .itemDesc {
@@ -50,6 +61,5 @@ p.champ-title {
 }
 
 .item-row {
-  border-width: 1px;
-  border-color: black;
+  
 }

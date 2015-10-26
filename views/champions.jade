@@ -18,7 +18,8 @@ block content
     each champ in champs
       tr.champ-row
         td.champ-img
-          img(src="//ddragon.leagueoflegends.com/cdn/" + version + "/img/champion/" + champ.image.full)
+          a(href="/champions/" + champ.id)
+            img(src="//ddragon.leagueoflegends.com/cdn/" + version + "/img/champion/" + champ.image.full)
         td
           p=champ.name
           p.champ-title=champ.title
