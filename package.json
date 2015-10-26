@@ -1,6 +1,6 @@
 {
   "name": "league_tracker",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "private": true,
   "scripts": {
     "start": "nodemon ./app.js"
@@ -11,11 +11,9 @@
     "debug": "~2.2.0",
     "express": "~4.13.1",
     "jade": "^1.11.0",
-    "jsonfile": "^2.2.3",
     "mongoose": "^4.2.2",
     "promise": "^7.0.4",
     "request": "^2.65.0",
-    "serve-favicon": "~2.3.0",
-    "then-request": "^2.1.1"
+    "serve-favicon": "~2.3.0"
   }
 }

@@ -1,7 +1,6 @@
 'use strict';
 
 var express = require('express');
-var jsonfile = require('jsonfile');
 var User = require('../models/User');
 var router = express.Router();
 
