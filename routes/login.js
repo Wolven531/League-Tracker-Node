@@ -2,39 +2,49 @@
 
 var express = require('express');
 var jsonfile = require('jsonfile');
-var userStore = require('../data/users');
+var User = require('../models/User');
 var router = express.Router();
 
 module.exports = function(app){
-  router.get('/', function(req, res, next) {
-    res.render('login', {
-      title: 'Register',
-      users: userStore.users.map(function(curr){
-        return {username: curr.username};
-      })
+  function getLogin(req, res, next) {
+    User.find({}, function(err, users) {
+      if(err) {
+        var err = new Error('Error retreiving users.');
+        err.status = 500;
+        return next(err);
+      }
+      return res.render('login', {
+        title: 'Register',
+        users: users
+      });
     });
-    return;
-  });
+  }
+  router.get('/', getLogin);
 
   router.post('/', function(req, res, next) {
     var q_username = req.body.league_name;
-    if(!q_username || q_username.length === 0){
+    if(!q_username || q_username.length === 0) {
       console.log('No league name provided.');
       var err = new Error('No league name provided.');
       err.status = 400;
       return next(err);
     }
-    var potential_matches = userStore.users.filter(function(curr){
-      return curr.username === q_username;
+    return User.find({ username: q_username }, function(err, users) {
+      if(err) {
+        var err = new Error('Error retreiving users.');
+        err.status = 500;
+        return next(err);
+      }
+      if(users.length === 0) {
+        var newUser = new User({ username: q_username, id: 0 });
+        newUser.save(function(err) {
+          if(err) {
+            return next(err);
+          }
+        });
+      }
+      return getLogin(req, res, next);
     });
-    if(potential_matches.length === 0){// new user
-      userStore.users.push({username: q_username, id: 0});
-      jsonfile.writeFileSync(__dirname + '/../data/users.json', userStore);// update the storage
-    }
-    res.render('login', {
-      title: 'Register'
-    });
-    return;
   });
   return router;
 };

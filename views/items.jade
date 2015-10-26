@@ -3,3 +3,34 @@ extends layout
 block content
   h1
     | #{title} (#{items.length})
+  table
+    tr
+      th
+        | Image
+      th
+        | Name
+      th
+        | Tags
+      th
+        | Description
+      th
+        | Builds Into
+    each item in items
+      tr.item-row
+        td.item-img
+          a(href="#" + item.id, name=item.id)
+            img(src="//ddragon.leagueoflegends.com/cdn/" + version + "/img/item/" + item.image.full)
+        td
+          p=item.name
+        td
+          ul
+            if item.tags
+              each tag in item.tags
+                li=tag
+        td
+          p(class='itemDesc')=item.sanitizedDescription
+        td
+            if item.into
+              each buildItem in item.into
+                  img(src="//ddragon.leagueoflegends.com/cdn/" + version + "/img/item/" + itemMap[buildItem].image.full)
+                  

@@ -44,3 +44,12 @@ p.skill-name {
 p.champ-title {
   text-transform: capitalize;
 }
+
+.itemDesc {
+  max-width: 700px;
+}
+
+.item-row {
+  border-width: 1px;
+  border-color: black;
+}

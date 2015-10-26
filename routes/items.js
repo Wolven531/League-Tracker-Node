@@ -8,7 +8,9 @@ module.exports = function(app){
     res.render('items', {
       title: 'Items',
       version: app.get('dragon_version'),
-      items: app.get('ordered_items')
+      items: app.get('ordered_items'),
+      itemMap: app.get('items_by_id'),
+      
     });
     return;
   });

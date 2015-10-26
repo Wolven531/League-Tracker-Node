@@ -5,10 +5,13 @@ var path = require('path');
 var favicon = require('serve-favicon');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var mongoose = require('mongoose');
 var http = require('http');
 var Promise = require('promise');
 var request = Promise.denodeify(require('request'));
 var passwords = require('./passwords');
+// var mongoose.connect('mongodb://' + passwords.mongo.host + '/' + passwords.mongo.db);
+mongoose.connect(passwords.mongo.host, passwords.mongo.db, passwords.mongo.port);
 
 var app = express();
 app.set('port', process.env.PORT || '3000');
@@ -94,9 +97,11 @@ function loadItems() {
 }
 
 function setup() {
+  var index = require('./routes/index')(app);
   var champions = require('./routes/champions')(app);
   var items = require('./routes/items')(app);
   var login = require('./routes/login')(app);
+  app.use('/', index);
   app.use('/champions', champions);
   app.use('/items', items);
   app.use('/login', login);
