@@ -46,6 +46,65 @@ p.skill-name {
   text-transform: capitalize;
 }
 
+.champ-header {
+  border: 1px solid #000;
+  width: 610px;
+  height: 120px;
+}
+
+.champ-stats,
+.champ-image {
+  display: inline-block;
+}
+
+.champ-stats {
+  margin: 15px 50px;
+}
+
+.champ-stats td:last-child {
+  padding-left: 10px;
+  width: 125px;
+}
+
+.champ-stats .stat {
+  height: 10px;
+  width: 300px;
+  background-color: #ddd;
+}
+
+.champ-stats .attack,
+.champ-stats .defense,
+.champ-stats .magic,
+.champ-stats .difficulty {
+  height: 10px;
+}
+
+.champ-stats .stat-1 { width: 30px; }
+.champ-stats .stat-2 { width: 60px; }
+.champ-stats .stat-3 { width: 90px; }
+.champ-stats .stat-4 { width: 120px; }
+.champ-stats .stat-5 { width: 150px; }
+.champ-stats .stat-6 { width: 180px; }
+.champ-stats .stat-7 { width: 210px; }
+.champ-stats .stat-8 { width: 240px; }
+.champ-stats .stat-9 { width: 270px; }
+
+.champ-stats .attack {
+  background-color: #9a1616;
+}
+
+.champ-stats .defense {
+  background-color: #128023;
+}
+
+.champ-stats .magic {
+  background-color: #16499a;
+}
+
+.champ-stats .difficulty {
+  background-color: #57169a;
+}
+
 ul.skin-list li {
   display: inline-block;
   width: 205px;

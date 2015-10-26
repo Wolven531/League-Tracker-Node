@@ -3,8 +3,34 @@ extends layout
 block content
   h1
     | #{title}, <span class="champ-title">#{champion.title}</span>
-  div
-    img(src="//ddragon.leagueoflegends.com/cdn/" + version + "/img/champion/" + champion.image.full)
+  div.champ-header
+    div.champ-image
+      img(src="//ddragon.leagueoflegends.com/cdn/" + version + "/img/champion/" + champion.image.full)
+    table.champ-stats
+      tr
+        td
+          | Attack
+        td
+          div.stat
+            div(class="attack stat-" + champion.info.attack, title=champion.info.attack)
+      tr
+        td
+          | Defense
+        td
+          div.stat
+            div(class="defense stat-" + champion.info.defense, title=champion.info.defense)
+      tr
+        td
+          | Magic
+        td
+          div.stat
+            div(class="magic stat-" + champion.info.magic, title=champion.info.magic)
+      tr
+        td
+          | Difficulty
+        td
+          div.stat
+            div(class="difficulty stat-" + champion.info.difficulty, title=champion.info.difficulty)
   h3
     | Lore
   div
