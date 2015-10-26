@@ -3,7 +3,8 @@
 
 ## Goal
 This project is designed to be a cleaner, faster, more extensible version of the
-original PhP project hosted at [Wolven531.com](http://www.wolven531.com/league/).
+original PhP project hosted at [Wolven531.com](http://www.wolven531.com/league/),
+with the PhP repo located [here](https://github.com/Wolven531/leaguetracker).
 
 ## Development
 During development, to avoid affecting the main site, all precautions will be
