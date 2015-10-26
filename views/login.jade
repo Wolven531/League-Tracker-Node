@@ -1,17 +1,25 @@
 extends layout
 
 block content
+  script(type="text/javascript", src="/scripts/login.js")
   h1
     | #{title}
   h2 Add New User
   div
-    form(method="POST", action="/login")
+    form(method="POST", action="/login", id="form_add_user")
       input(type="text", name="league_name", id="league_name")
       br
-      input(type="submit", value="Register")
+      input(type="submit", value="Register", id="btn_add_user")
   h2 Current Users
   div
-    ul
+    table#current-users
+      thead
+        tr
+          th
+            | Username
+          th
+            | ID
       each user in users
-        li
-          | #{user.username} (#{user.id})
+        tr
+          td.username=user.username
+          td=user.id
