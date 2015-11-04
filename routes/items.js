@@ -10,7 +10,7 @@ module.exports = function(app){
       version: app.get('dragon_version'),
       items: app.get('ordered_items'),
       itemMap: app.get('items_by_id'),
-      
+      itemTags: app.get('item_tags')
     });
     return;
   });

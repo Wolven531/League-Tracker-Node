@@ -21,21 +21,21 @@ module.exports = function(app){
   router.get('/', getLogin);
 
   router.post('/', function(req, res, next) {
-    var q_username = req.body.league_name;
-    if(!q_username || q_username.length === 0) {
+    var q_username = (req.body.league_name || '').toLowerCase();
+    if(q_username.length === 0) {
       console.log('No league name provided.');
       var err = new Error('No league name provided.');
       err.status = 400;
       return next(err);
     }
-    return User.find({ username: q_username }, function(err, users) {
+    return User.find({ name: q_username }, function(err, users) {
       if(err) {
         var err = new Error('Error retreiving users.');
         err.status = 500;
         return next(err);
       }
       if(users.length === 0) {
-        var newUser = new User({ username: q_username, id: 0 });
+        var newUser = new User({ name: q_username, id: 0 });
         newUser.save(function(err) {
           if(err) {
             return next(err);

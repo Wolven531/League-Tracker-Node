@@ -3,6 +3,9 @@ extends layout
 block content
   h1
     | #{title} (#{items.length})
+  ul
+    each tag in itemTags
+      li=tag
   table
     tr
       th

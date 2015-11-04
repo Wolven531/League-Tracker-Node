@@ -10,7 +10,7 @@ var http = require('http');
 var Promise = require('promise');
 var request = Promise.denodeify(require('request'));
 var passwords = require('./passwords');
-// var mongoose.connect('mongodb://' + passwords.mongo.host + '/' + passwords.mongo.db);
+var User = require('./models/User');
 mongoose.connect(passwords.mongo.host, passwords.mongo.db, passwords.mongo.port);
 
 var app = express();
@@ -18,8 +18,10 @@ app.set('port', process.env.PORT || '3000');
 app.set('views', path.join(__dirname, 'views'));// view engine setup
 app.set('view engine', 'jade');// view engine setup
 app.set('api_key', passwords.riot_api_key);
-app.set('api_host', 'https://global.api.pvp.net/api/lol/static-data/na/');
+app.set('api_static_host', 'https://global.api.pvp.net/api/lol/static-data/na/');
+app.set('api_host', 'https://global.api.pvp.net/api/lol/na/');
 app.set('api_version', 'v1.2');
+app.set('api_summoner_version', 'v1.4');
 // uncomment after placing your favicon in /public
 // app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 app.use(bodyParser.json());
@@ -27,14 +29,17 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 var server = http.createServer(app);
+var updateUsers = false;// hits actual API (counts against rate limit)
 
 loadVersion()
+  .then(userUpdate)
   .then(loadChampions)
   .then(loadItems)
+  .then(loadTags)
   .then(setup);
 
 function loadVersion() {
-  var versionUrl = app.get('api_host') + app.get('api_version') + '/realm?api_key=' + app.get('api_key');
+  var versionUrl = app.get('api_static_host') + app.get('api_version') + '/realm?api_key=' + app.get('api_key');
   console.log('Loading Version...');
   return request(versionUrl)
     .then(function(resp) {
@@ -50,7 +55,7 @@ function loadVersion() {
 }
 
 function loadChampions() {
-  var champUrl = app.get('api_host') + app.get('api_version') + '/champion?champData=all&api_key=' + app.get('api_key');
+  var champUrl = app.get('api_static_host') + app.get('api_version') + '/champion?champData=all&api_key=' + app.get('api_key');
   console.log('Loading Champions...');
   return request(champUrl)
     .then(function (resp) {
@@ -77,7 +82,7 @@ function loadChampions() {
 }
 
 function loadItems() {
-  var itemUrl = app.get('api_host') + app.get('api_version') + '/item?itemListData=all&api_key=' + app.get('api_key');
+  var itemUrl = app.get('api_static_host') + app.get('api_version') + '/item?itemListData=all&api_key=' + app.get('api_key');
   console.log('Loading Items...');
   return request(itemUrl)
     .then(function (resp) {
@@ -96,6 +101,90 @@ function loadItems() {
       }
       app.set('ordered_items', orderedItems);
       console.log('Items loaded (' + app.get('ordered_items').length + ').');
+      return;
+    });
+}
+
+function loadTags() {
+  var tags = [];
+  console.log('Adding tags...');
+  app.get('ordered_items').forEach(function(currentItem, ind, arr) {
+    var itemTags = currentItem.tags || [];
+    itemTags.forEach(function(tag){
+      if(tags.indexOf(tag) === -1){
+        tags.push(tag);
+      }
+    });
+  });
+  app.set('item_tags', tags.sort());
+  console.log('Added tags (' + tags.length + ').');
+  return;
+}
+
+function userUpdate() {
+  console.log('Loading users...');
+  if(!updateUsers) {
+    return User.find()
+      .then(function(users) {
+      var nonAllocated = users.filter(function(curr) {
+          return curr.id === 0;
+        });
+        console.log('Loaded users (' + users.length + ' total, ' + nonAllocated.length + ' non-allocated.)');
+      });
+  }
+  return User.find()
+    .then(function(users) {
+      var summonerLookupBatchSize = 40;
+      var nonAllocated = users.filter(function(curr) {
+        return curr.id === 0;
+      });
+      console.log('Loaded users (' + users.length + ' total, ' + nonAllocated.length + ' non-allocated.)');
+      var requests = [];
+      var usersStr = '';
+      for(var a = 0; a < nonAllocated.length; a++) {
+        usersStr += (usersStr.length === 0 ? '' : ',') + nonAllocated[a].name;
+        // if we hit batch size or we're on the final iteration
+        if(((a + 1) % summonerLookupBatchSize === 0 && a !== 0) || a === nonAllocated.length - 1) {
+          var url = app.get('api_host') + app.get('api_summoner_version') + '/summoner/by-name/' + usersStr + '?api_key=' + app.get('api_key');
+          requests.push(url);
+          usersStr = '';
+        }
+      }
+      return Promise.all(requests);
+    })
+    .map(function(currUrl) {
+      return request(currUrl)
+        .then(function(resp) {
+          if(resp.statusCode === 404) {
+            console.log('None of the summoners were found.');
+            return;
+          }
+          else if(resp.statusCode !== 200) {
+            var err = new Error('Failed to load URL: ' + currUrl);
+            err.status = 500;
+            throw err;
+          }
+          var data = JSON.parse(resp.body);
+          var usernames = Object.keys(data);// each key is a username
+          usernames.forEach(function(username) {
+            console.log('Updating ' + username + ' with ', data[username]);
+            User.findOneAndUpdate({ name: username }, data[username]).exec();
+          });
+          return;
+        })
+        .catch(function(err) {
+          console.log('Error updating users.');
+          console.log(err);
+          return;
+        });
+    })
+    .then(function() {
+      console.log('Removing non-updated users.');
+      User.remove({ id: 0 }).exec();
+    })
+    .catch(function(err) {
+      console.log('Error retreiving users.');
+      console.log(err);
       return;
     });
 }
@@ -119,15 +208,13 @@ function setup() {
 
   // error handlers
 
-  //if (app.get('env') === 'development') {
-    app.use(function(err, req, res, next) {
-      res.status(err.status || 500);
-      res.render('error', {
-        message: err.message,
-        error: err
-      });
+  app.use(function(err, req, res, next) {
+    res.status(err.status || 500);
+    res.render('error', {
+      message: err.message,
+      error: app.get('env') === 'development' ? err : {}
     });
-  //}
+  });
   server.listen(app.get('port'));
   server.on('error', onError);
   server.on('listening', onListening);
@@ -153,7 +240,7 @@ function setup() {
   
   function onListening() {
     var addr = server.address();
-    var bind = typeof addr === 'string' ? 'pipe ' + addr : 'port ' + addr.port;
-    console.log('Listening on ' + bind + '.');
+    var bind = typeof addr === 'string' ? 'pipe ' + addr : ' ' + addr.port;
+    console.log('Listening at ' + process.env.IP + ':' + bind + '.');
   }
 }

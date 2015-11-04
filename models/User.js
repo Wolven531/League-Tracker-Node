@@ -5,7 +5,10 @@ var Schema = mongoose.Schema;
 
 var userSchema = new Schema({
   id: { type: Number },
-  username: { type: String, required: true }
+  name: { type: String, required: true },
+  profileIconId: { type: Number },
+  revisionDate: { type: Number },
+  summonerLevel: { type: Number }
 });
 
 module.exports = mongoose.model('User', userSchema);
