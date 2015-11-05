@@ -7,10 +7,12 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
 var http = require('http');
+var moment = require('moment');
 var Promise = require('promise');
 var request = Promise.denodeify(require('request'));
 var passwords = require('./passwords');
 var User = require('./models/User');
+var PageView = require('./models/PageView');
 mongoose.connect(passwords.mongo.host, passwords.mongo.db, passwords.mongo.port);
 
 var app = express();
@@ -194,30 +196,25 @@ function setup() {
   var champions = require('./routes/champions')(app);
   var items = require('./routes/items')(app);
   var login = require('./routes/login')(app);
+
+  app.use(analyticsCapture);
   app.use('/', index);
   app.use('/champions', champions);
   app.use('/items', items);
   app.use('/login', login);
+  app.use(notFoundCapture);// catch 404 and forward to error handler
+  app.use(serverErrorCapture);// error handlers
 
-  // catch 404 and forward to error handler
-  app.use(function(req, res, next) {
-    var err = new Error('Not Found');
-    err.status = 404;
-    next(err);
-  });
-
-  // error handlers
-
-  app.use(function(err, req, res, next) {
-    res.status(err.status || 500);
-    res.render('error', {
-      message: err.message,
-      error: app.get('env') === 'development' ? err : {}
-    });
-  });
   server.listen(app.get('port'));
   server.on('error', onError);
   server.on('listening', onListening);
+
+  function onListening() {
+    var addr = server.address();
+    var bind = typeof addr === 'string' ? 'pipe ' + addr : ' ' + addr.port;
+    console.log('Listening at ' + process.env.IP + ':' + bind + '.');
+  }
+
   function onError(error) {
     if (error.syscall !== 'listen') {
       throw error;
@@ -237,10 +234,47 @@ function setup() {
         throw error;
     }
   }
-  
-  function onListening() {
-    var addr = server.address();
-    var bind = typeof addr === 'string' ? 'pipe ' + addr : ' ' + addr.port;
-    console.log('Listening at ' + process.env.IP + ':' + bind + '.');
+
+  function analyticsCapture(req, res, next) {
+    var searchUrl = req.url;
+    var referer = req.headers.referer;
+    PageView
+      .findOne({
+        date: moment().utc().format('YYYY-MM-DD'),
+        url: searchUrl,
+        referer: referer
+      })
+      .then(function(pageViewInfo) {
+        if(pageViewInfo) {// if we have this combination on today, increment it
+          pageViewInfo.views++;
+        } else {// otherwise add it
+          pageViewInfo = new PageView({
+            url: searchUrl,
+            referer: referer,
+            date: moment().utc().format('YYYY-MM-DD'),
+            views: 1
+          });
+        }
+        pageViewInfo.save();
+      })
+      .catch(function(err) {
+        console.log('Error adding page view.');
+        console.log(err);
+      });
+    next();// continue with the router regardless of prior code
+  }
+
+  function notFoundCapture(req, res, next) {
+    var err = new Error('Not Found');
+    err.status = 404;
+    next(err);
+  }
+
+  function serverErrorCapture(err, req, res, next) {
+    res.status(err.status || 500);
+    res.render('error', {
+      message: err.message,
+      error: app.get('env') === 'development' ? err : {}
+    });
   }
 }
