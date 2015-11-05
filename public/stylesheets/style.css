@@ -123,15 +123,20 @@ img.champion-skin {
   
 }
 
-h1 {
+h1,
+h2 {
   margin: 10px auto;
   text-align: center;
 }
 
-#page-view {
+#add_user,
+#page-view,
+#current-users {
   margin: 0 auto;
 }
 
+#current-users th,
+#current-users td,
 #page-view th,
 #page-view td {
   padding: 3px 7px;
@@ -140,4 +145,15 @@ h1 {
 
 .med-col {
   width: 350px;
+}
+
+.summoner-level {
+  text-align: right;
+}
+
+#add_user {
+  width: 250px;
+  text-align: center;
+  border: 1px solid #000;
+  padding: 10px;
 }

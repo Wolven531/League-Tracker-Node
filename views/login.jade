@@ -4,8 +4,8 @@ block content
   script(type="text/javascript", src="/scripts/login.js")
   h1
     | #{title}
-  h2 Add New User
-  div
+  div#add_user
+    h2 Add New User
     form(method="POST", action="/login", id="form_add_user")
       input(type="text", name="league_name", id="league_name")
       br
@@ -16,10 +16,17 @@ block content
       thead
         tr
           th
+            | Profile Icon
+          th
             | Username
           th
             | ID
+          th
+            | Summoner Level
       each user in users
         tr
+          td
+            img(src="//ddragon.leagueoflegends.com/cdn/" + version + "/img/profileicon/" + user.profileIconId + ".png")
           td.username=user.name
           td=user.id
+          td.summoner-level=user.summonerLevel

@@ -14,6 +14,7 @@ module.exports = function(app){
       }
       return res.render('login', {
         title: 'Register',
+        version: app.get('dragon_version'),
         users: users
       });
     });
