@@ -196,9 +196,11 @@ function setup() {
   var champions = require('./routes/champions')(app);
   var items = require('./routes/items')(app);
   var login = require('./routes/login')(app);
+  var pageViewInfo = require('./routes/pageviews')(app);
 
   app.use(analyticsCapture);
   app.use('/', index);
+  app.use('/information', pageViewInfo);
   app.use('/champions', champions);
   app.use('/items', items);
   app.use('/login', login);

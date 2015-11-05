@@ -1,0 +1,22 @@
+extends layout
+
+block content
+  h1=title
+  div
+    table#page-view
+      tr
+        th URL
+        th Referer
+        th Views
+        th Date
+      each pageInfo in pageViewInfos
+        tr
+          td
+            | #{pageInfo.url}
+          td.med-col
+            | #{pageInfo.referer}
+          td
+            | #{pageInfo.views}
+          td
+            | #{pageInfo.formattedDate}
+          
