@@ -28,9 +28,9 @@ module.exports = function(app){
     if(moment(pv1.date).isSame(moment(pv2.date))) {// if the same date on the two, further comparison needed
       var sortedByUrl = ([pv1.url, pv2.url]).sort();
       if(pv1.views > pv2.views) {// we want the higher views to be first, favor pv1
-        return sortedByUrl[0] === pv1.url ? -1 : 1;// sort based on url
+        return -1;
       } else if(pv2.views > pv1.views) {// we want the higher views to be first, unfavor pv1
-        return sortedByUrl[0] === pv2.url ? -1 : 1;// sort based on url
+        return 1;
       } else {// even page views, still need url sort
         return sortedByUrl[0] === pv1.url ? -1 : 1;
       }

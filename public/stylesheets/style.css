@@ -147,6 +147,10 @@ h2 {
   width: 350px;
 }
 
+.wide-col {
+  width: 500px;
+}
+
 .summoner-level {
   text-align: right;
 }
