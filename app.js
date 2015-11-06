@@ -204,7 +204,7 @@ function createGameUpdateCycle() {
         users.forEach(function(user, ind) {
           setTimeout(function() {
             updateUser(user);
-          }, (ind * 1000) + 500);// do one request slightly after a second each to avoid hitting rate limit
+          }, (ind * 1100));// do one request slightly after a second each to avoid hitting rate limit
         });
         resolve();
       })
