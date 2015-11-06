@@ -244,22 +244,25 @@ function createGameUpdateCycle() {
           return;
         }
         var newStatInfo = new StatInfo(game.stats);
-        return Promise.resolve(newStatInfo.save());// in order to user the catch()
-      })
-      .then(function(statInfo) {
-        var newGame = new Game(game);
-        newGame.stats = statInfo;
-        return newGame.save();
-      })
-      .then(function(game) {
-        var newSummonerGame = new SummonerGame({
-          user: user.id,
-          game: game.gameId
-        });
-        return newSummonerGame.save();
-      })
-      .then(function(summonerGame) {
-        console.log('Successfully saved game ' + summonerGame.game + ' and user ' + summonerGame.user);
+        return Promise.resolve(newStatInfo.save())// in order to user the catch()
+          .then(function(statInfo) {
+            var newGame = new Game(game);
+            newGame.stats = statInfo;
+            return newGame.save();
+          })
+          .then(function(game) {
+            var newSummonerGame = new SummonerGame({
+              user: user.id,
+              game: game.gameId
+            });
+            return newSummonerGame.save();
+          })
+          .then(function(summonerGame) {
+            console.log('Successfully saved game ' + summonerGame.game + ' and user ' + summonerGame.user);
+          })
+          .catch(function(err) {
+            console.log('Error creating summoner game combo', err);
+          });
       })
       .catch(function(err) {
         console.log('Error looking up summoner game combo', err);
