@@ -13,6 +13,9 @@ var request = Promise.denodeify(require('request'));
 var passwords = require('./passwords');
 var User = require('./models/User');
 var PageView = require('./models/PageView');
+var SummonerGame = require('./models/SummonerGame');
+var Game = require('./models/Game');
+var StatInfo = require('./models/StatInfo');
 mongoose.connect(passwords.mongo.host, passwords.mongo.db, passwords.mongo.port);
 
 var app = express();
@@ -24,6 +27,7 @@ app.set('api_static_host', 'https://global.api.pvp.net/api/lol/static-data/na/')
 app.set('api_host', 'https://global.api.pvp.net/api/lol/na/');
 app.set('api_version', 'v1.2');
 app.set('api_summoner_version', 'v1.4');
+app.set('api_recent_game_version', 'v1.3');
 // uncomment after placing your favicon in /public
 // app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 app.use(bodyParser.json());
@@ -31,13 +35,14 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 var server = http.createServer(app);
-var updateUsers = false;// hits actual API (counts against rate limit)
+var updateUsers = true;// hits actual API (counts against rate limit)
 
 loadVersion()
   .then(userUpdate)
   .then(loadChampions)
   .then(loadItems)
   .then(loadTags)
+  .then(createGameUpdateCycle)
   .then(setup);
 
 function loadVersion() {
@@ -189,6 +194,77 @@ function userUpdate() {
       console.log(err);
       return;
     });
+}
+
+function createGameUpdateCycle() {
+  return new Promise(function(resolve, reject) {
+    console.log('Updating games...');
+    User.find()
+      .then(function(users) {
+        users.forEach(function(user, ind) {
+          setTimeout(function() {
+            updateUser(user);
+          }, (ind * 1000) + 500);// do one request slightly after a second each to avoid hitting rate limit
+        });
+        resolve();
+      })
+      .catch(function(err) {
+        console.log('Error looking up users.', err);
+      });
+    // var gameUpdateHandle = setInterval(function() {
+    // }, 200);
+    // app.set('game_update_handle', gameUpdateHandle);
+  });
+
+  function updateUser(user) {
+    console.log('Updating user games ' + user.name + ', ' + moment().utc().format('MMM Do, YYYY HH:mm:ss:SSSS'));
+    var recentGamesUrl = app.get('api_host') + app.get('api_recent_game_version') + '/game/by-summoner/' + user.id + '/recent?api_key=' + app.get('api_key');
+    return request(recentGamesUrl)
+      .then(function(resp) {
+        if(resp.statusCode !== 200) {
+          var err = new Error('Failed to load games for ' + user.name + ' (' + user.id + ').');
+          err.status = 500;
+          throw new err;
+        }
+        var games = JSON.parse(resp.body).games;// games is an array
+        games.forEach(function(game) {
+          updateGame(user, game);
+        });
+      })
+      .catch(function(err) {
+        console.log('Error looking up recent games.', err);
+      });
+  }
+
+  function updateGame(user, game) {
+    SummonerGame
+      .find({ user: user.id, game: game.gameId })
+      .then(function(summonerGames) {
+        if(summonerGames.length > 0) {// make sure we haven't already stored this game for this user
+          return;
+        }
+        var newStatInfo = new StatInfo(game.stats);
+        return Promise.resolve(newStatInfo.save());// in order to user the catch()
+      })
+      .then(function(statInfo) {
+        var newGame = new Game(game);
+        newGame.stats = statInfo;
+        return newGame.save();
+      })
+      .then(function(game) {
+        var newSummonerGame = new SummonerGame({
+          user: user.id,
+          game: game.gameId
+        });
+        return newSummonerGame.save();
+      })
+      .then(function(summonerGame) {
+        console.log('Successfully saved game ' + summonerGame.game + ' and user ' + summonerGame.user);
+      })
+      .catch(function(err) {
+        console.log('Error looking up summoner game combo', err);
+      });
+  }
 }
 
 function setup() {
