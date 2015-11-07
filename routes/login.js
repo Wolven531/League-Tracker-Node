@@ -2,22 +2,37 @@
 
 var express = require('express');
 var User = require('../models/User');
+var UserTotal = require('../models/UserTotal');
 var router = express.Router();
 
 module.exports = function(app){
   function getLogin(req, res, next) {
-    User.find({}, function(err, users) {
-      if(err) {
-        var err = new Error('Error retreiving users.');
+    var allUsers = [];
+    User.find({})
+      .then(function(users) {
+        allUsers = users;
+        return UserTotal.find({}).populate('user');
+      })
+      .then(function(userTotals) {
+        var totalMap = {};
+        userTotals.forEach(function(total) {
+          totalMap[total.user.id] = total;
+        });
+        return res.render('login', {
+          title: 'Register',
+          version: app.get('dragon_version'),
+          users: allUsers.map(function(user) {
+            if(totalMap[user.id]) {
+              user.totals = totalMap[user.id];
+            }
+            return user;
+          })
+        });
+      })
+      .catch(function(err) {
         err.status = 500;
         return next(err);
-      }
-      return res.render('login', {
-        title: 'Register',
-        version: app.get('dragon_version'),
-        users: users
       });
-    });
   }
   router.get('/', getLogin);
 

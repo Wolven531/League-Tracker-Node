@@ -303,6 +303,7 @@ function setup() {
   var items = require('./routes/items')(app);
   var login = require('./routes/login')(app);
   var pageViewInfo = require('./routes/pageviews')(app);
+  var user = require('./routes/user')(app);
 
   app.use(analyticsCapture);
   app.use('/', index);
@@ -310,6 +311,7 @@ function setup() {
   app.use('/champions', champions);
   app.use('/items', items);
   app.use('/login', login);
+  app.use('/user', user);
   app.use(notFoundCapture);// catch 404 and forward to error handler
   app.use(serverErrorCapture);// error handlers
 

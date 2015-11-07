@@ -1,0 +1,19 @@
+extends layout
+
+block content
+  h1=title
+  ul
+    li
+      | Total Games: #{userTotal.games_formatted}
+    li
+      | Wins to Losses: #{userTotal.wins_formatted}:#{userTotal.losses_formatted}
+    li
+      | KDA: #{userTotal.kda_formatted}
+    li
+      | Total Kills: #{userTotal.kills_formatted} (#{userTotal.avg_kills_formatted} avg)
+    li
+      | Total Deaths: #{userTotal.deaths_formatted} (#{userTotal.avg_deaths_formatted} avg)
+    li
+      | Total Assists: #{userTotal.assists_formatted} (#{userTotal.avg_assists_formatted} avg)
+    li
+      | Total Gold: #{userTotal.gold_formatted} (#{userTotal.avg_gold_formatted} avg)
