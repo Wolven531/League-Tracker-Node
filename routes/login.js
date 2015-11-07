@@ -36,7 +36,7 @@ module.exports = function(app){
         return next(err);
       }
       if(users.length === 0) {
-        var newUser = new User({ name: q_username, id: 0 });
+        var newUser = new User({ name: q_username, id: 0 });// this is a temp save that will be removed when userUpdate() runs
         newUser.save(function(err) {
           if(err) {
             return next(err);
