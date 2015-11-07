@@ -35,9 +35,9 @@ module.exports = function(app){
         return sortedByUrl[0] === pv1.url ? -1 : 1;
       }
     } else if(moment(pv1.date).isAfter(moment(pv2.date))) {// we want the newest first
-      return 1;
-    } else {// we don't care at this point
       return -1;
+    } else {// we don't care at this point
+      return 1;
     }
   }
 
