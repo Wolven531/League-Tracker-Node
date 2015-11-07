@@ -25,8 +25,17 @@ block content
             | Summoner Level
       each user in users
         tr
-          td
-            img(src="//ddragon.leagueoflegends.com/cdn/" + version + "/img/profileicon/" + user.profileIconId + ".png")
-          td.username=user.name
-          td=user.id
-          td.summoner-level=user.summonerLevel
+          if user.profileIconId
+            td
+              img(src="//ddragon.leagueoflegends.com/cdn/" + version + "/img/profileicon/" + user.profileIconId + ".png")
+            td.username=user.name
+            td=user.id
+            td.summoner-level=user.summonerLevel
+          else
+            td
+              img(src="/images/default_profile_icon.gif")
+            td.username=user.name
+            td
+              | ???
+            td.summoner-level
+              | --
