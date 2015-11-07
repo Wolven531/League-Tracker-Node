@@ -22,7 +22,7 @@ module.exports = function(app){
   router.get('/', getLogin);
 
   router.post('/', function(req, res, next) {
-    var q_username = (req.body.league_name || '').toLowerCase();
+    var q_username = (req.body.league_name || '');//.toLowerCase();
     if(q_username.length === 0) {
       console.log('No league name provided.');
       var err = new Error('No league name provided.');

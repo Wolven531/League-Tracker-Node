@@ -16,6 +16,7 @@ var PageView = require('./models/PageView');
 var SummonerGame = require('./models/SummonerGame');
 var Game = require('./models/Game');
 var StatInfo = require('./models/StatInfo');
+var UserTotal = require('./models/UserTotal');
 mongoose.connect(passwords.mongo.host, passwords.mongo.db, passwords.mongo.port);
 
 var app = express();
@@ -175,7 +176,8 @@ function userUpdate() {
           var usernames = Object.keys(data);// each key is a username
           usernames.forEach(function(username) {
             console.log('Updating ' + username + ' with ', data[username]);
-            User.findOneAndUpdate({ name: username }, data[username]).exec();
+            var newUser = new User(data[username]);
+            newUser.save();
           });
           return;
         })
@@ -219,53 +221,78 @@ function createGameUpdateCycle() {
   function updateUser(user) {
     console.log('Updating user games ' + user.name + ', ' + moment().utc().format('MMM Do, YYYY HH:mm:ss:SSSS'));
     var recentGamesUrl = app.get('api_host') + app.get('api_recent_game_version') + '/game/by-summoner/' + user.id + '/recent?api_key=' + app.get('api_key');
-    return request(recentGamesUrl)
+    var idArr = [];
+    return SummonerGame
+      .find({ user: user }).populate('game')
+      .then(function(allSummonerGames) {
+        idArr = allSummonerGames.map(function(curr) {// this is all the games we already have for this user
+          return curr.game.gameId;
+        });
+        return request(recentGamesUrl);
+      })
       .then(function(resp) {
         if(resp.statusCode !== 200) {
           var err = new Error('Failed to load games for ' + user.name + ' (' + user.id + ').');
           err.status = 500;
           throw new err;
         }
-        var games = JSON.parse(resp.body).games;// games is an array
-        games.forEach(function(game) {
-          updateGame(user, game);
+        var games = JSON.parse(resp.body).games.filter(function(curr) {// remove all games we already have
+          return idArr.indexOf(curr.gameId) === -1;
         });
+        return Promise.all(games.map(function(game) {// all() forces then() to wait until all promises resolve successfully
+          return updateGame(user, game);
+        }));
+      })
+      .then(function(allGamePromises) {// at this point all game updates for this user have been completed
+        return SummonerGame.find({ user: user }).populate('user game');
+      })
+      .then(function(allSummonerGames) {
+        return Game.find({
+          _id: {
+            $in: allSummonerGames.map(function(curr) {return curr.game._id })
+          }
+        }).populate('stats');
+      })
+      .then(function(games) {
+        return UserTotal.remove({ user: user }).exec()
+          .then(function() {// this then() is nested to retain access to the games variable
+            var newUserTotal = new UserTotal({ user: user });
+            games.forEach(function(curr) {
+              newUserTotal.kills += curr.stats.championsKilled || 0;
+              newUserTotal.deaths += curr.stats.numDeaths || 0;
+              newUserTotal.assists += curr.stats.assists || 0;
+              newUserTotal.gold += curr.stats.goldEarned || 0;
+              newUserTotal.wins += curr.stats.win ? 1 : 0;
+              newUserTotal.losses += curr.stats.win ? 0 : 1;
+            });
+            return newUserTotal.save();
+          });
       })
       .catch(function(err) {
-        console.log('Error looking up recent games.', err);
+        console.log('Error updating user.', err);
       });
   }
 
   function updateGame(user, game) {
-    SummonerGame
-      .find({ user: user.id, game: game.gameId })
-      .then(function(summonerGames) {
-        if(summonerGames.length > 0) {// make sure we haven't already stored this game for this user
-          return;
-        }
-        var newStatInfo = new StatInfo(game.stats);
-        return Promise.resolve(newStatInfo.save())// in order to user the catch()
-          .then(function(statInfo) {
-            var newGame = new Game(game);
-            newGame.stats = statInfo;
-            return newGame.save();
-          })
-          .then(function(game) {
-            var newSummonerGame = new SummonerGame({
-              user: user.id,
-              game: game.gameId
-            });
-            return newSummonerGame.save();
-          })
-          .then(function(summonerGame) {
-            console.log('Successfully saved game ' + summonerGame.game + ' and user ' + summonerGame.user);
-          })
-          .catch(function(err) {
-            console.log('Error creating summoner game combo', err);
-          });
+    var newStatInfo = new StatInfo(game.stats);
+    return Promise.resolve(newStatInfo.save())// in order to user the catch()
+      .then(function(statInfo) {
+        var newGame = new Game(game);
+        newGame.stats = statInfo;
+        return newGame.save();
+      })
+      .then(function(game) {
+        var newSummonerGame = new SummonerGame({
+          user: user,
+          game: game
+        });
+        return newSummonerGame.save();
+      })
+      .then(function(summonerGame) {
+        console.log('Successfully saved game ' + summonerGame.game.gameId + ' and user ' + summonerGame.user.name);
       })
       .catch(function(err) {
-        console.log('Error looking up summoner game combo', err);
+        console.log('Error updating game.', err);
       });
   }
 }
