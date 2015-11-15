@@ -29,6 +29,7 @@ app.set('api_host', 'https://global.api.pvp.net/api/lol/na/');
 app.set('api_version', 'v1.2');
 app.set('api_summoner_version', 'v1.4');
 app.set('api_recent_game_version', 'v1.3');
+app.set('update_interval', 1000 * 60 * 60);// every hour
 // uncomment after placing your favicon in /public
 // app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 app.use(bodyParser.json());
@@ -199,25 +200,28 @@ function userUpdate() {
 }
 
 function createGameUpdateCycle() {
+  console.log('Creating cycle to run every ' + app.get('update_interval') + ' millis...');
   return new Promise(function(resolve, reject) {
-    console.log('Updating games...');
-    User.find()
-      .then(function(users) {
-        users.forEach(function(user, ind) {
-          setTimeout(function() {
-            updateUser(user);
-          }, (ind * 1100));// do one request slightly after a second each to avoid hitting rate limit
-        });
-        resolve();
-      })
-      .catch(function(err) {
-        console.log('Error looking up users.', err);
-      });
-    // var gameUpdateHandle = setInterval(function() {
-    // }, 200);
-    // app.set('game_update_handle', gameUpdateHandle);
+    gameUpdate();
+    var gameUpdateHandle = setInterval(gameUpdate, app.get('update_interval'));
+    app.set('game_update_handle', gameUpdateHandle);
+    resolve();
   });
+}
 
+function gameUpdate() {
+  console.log('Updating games...');
+  User.find()
+    .then(function(users) {
+      users.forEach(function(user, ind) {
+        setTimeout(function() {
+          updateUser(user);
+        }, (ind * 1100));// do one request slightly after a second each to avoid hitting rate limit
+      });
+    })
+    .catch(function(err) {
+      console.log('Error looking up users.', err);
+    });
   function updateUser(user) {
     console.log('Updating user games ' + user.name + ', ' + moment().utc().format('MMM Do, YYYY HH:mm:ss:SSSS'));
     var recentGamesUrl = app.get('api_host') + app.get('api_recent_game_version') + '/game/by-summoner/' + user.id + '/recent?api_key=' + app.get('api_key');
