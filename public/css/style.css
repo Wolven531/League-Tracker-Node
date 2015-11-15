@@ -23,18 +23,6 @@ body {
   width: 15%;
 }
 
-tr.champ-row {
-  height: 150px;
-}
-
-tr.champ-row td.champ-img {
-  vertical-align: middle;
-}
-
-tr.champ-row td {
-  vertical-align: top;
-}
-
 td.skill,
 td.passive {
   text-align: center;
@@ -45,21 +33,10 @@ p.skill-name {
   width: 125px;
 }
 
-.champ-box {
-  
-}
-
-.champ-box > div {
-  display: inline-block;
-}
-
 .champ-title {
-  padding: 10px;
-  max-width: 180px;
-  word-break: break-word;
+  text-transform: capitalize;
 }
 
-.champ-title-short,
 .skin-title {
   text-transform: capitalize;
 }
@@ -67,60 +44,54 @@ p.skill-name {
 .champ-header {
   border: 1px solid #000;
   width: 610px;
-  height: 120px;
-}
-
-.champ-stats,
-.champ-image {
-  display: inline-block;
+  height: 122px;
+  margin: 0 auto;
 }
 
 .champ-stats {
-  margin: 15px 50px;
+  margin-top: 20px 0;
+}
+.champ-image {
+  text-align: center;
+}
+.champ-image img {
+  vertical-align: inherit;
 }
 
-.champ-stats td:last-child {
-  padding-left: 10px;
-  width: 125px;
+.progress {
+  background-image: -webkit-linear-gradient(top,#dedede 0,#efefef 100%);
+  background-image: -o-linear-gradient(top,#dedede 0,#efefef 100%);
+  background-image: -webkit-gradient(linear,left top,left bottom,from(#dedede),to(#efefef));
+  background-image: linear-gradient(to bottom,#dedede 0,#efefef 100%);
 }
 
-.champ-stats .stat {
-  height: 10px;
-  width: 300px;
-  background-color: #ddd;
+.attack {/* #337ab7 TOP TO BOTTOM #286090*/
+  background-image: -webkit-linear-gradient(top,#cc4646 0,#770505 100%);
+  background-image: -o-linear-gradient(top,#cc4646 0,#770505 100%);
+  background-image: -webkit-gradient(linear,left top,left bottom,from(#cc4646),to(#770505));
+  background-image: linear-gradient(to bottom,#cc4646 0,#770505 100%);
+  background-color: #cc4646;
 }
-
-.champ-stats .attack,
-.champ-stats .defense,
-.champ-stats .magic,
-.champ-stats .difficulty {
-  height: 10px;
+.defense {
+  background-image: -webkit-linear-gradient(top,#12cc23 0,#057705 100%);
+  background-image: -o-linear-gradient(top,#12cc23 0,#057705 100%);
+  background-image: -webkit-gradient(linear,left top,left bottom,from(#12cc23),to(#057705));
+  background-image: linear-gradient(to bottom,#12cc23 0,#057705 100%);
+  background-color: #12cc23;
 }
-
-.champ-stats .stat-1 { width: 30px; }
-.champ-stats .stat-2 { width: 60px; }
-.champ-stats .stat-3 { width: 90px; }
-.champ-stats .stat-4 { width: 120px; }
-.champ-stats .stat-5 { width: 150px; }
-.champ-stats .stat-6 { width: 180px; }
-.champ-stats .stat-7 { width: 210px; }
-.champ-stats .stat-8 { width: 240px; }
-.champ-stats .stat-9 { width: 270px; }
-
-.champ-stats .attack {
-  background-color: #9a1616;
+.magic {
+  background-image: -webkit-linear-gradient(top,#1649cc 0,#050577 100%);
+  background-image: -o-linear-gradient(top,#1649cc 0,#050577 100%);
+  background-image: -webkit-gradient(linear,left top,left bottom,from(#1649cc),to(#050577));
+  background-image: linear-gradient(to bottom,#1649cc 0,#050577 100%);
+  background-color: #1649cc;
 }
-
-.champ-stats .defense {
-  background-color: #128023;
-}
-
-.champ-stats .magic {
-  background-color: #16499a;
-}
-
-.champ-stats .difficulty {
-  background-color: #57169a;
+.difficulty {
+  background-image: -webkit-linear-gradient(top,#8716aa 0,#330533 100%);
+  background-image: -o-linear-gradient(top,#8716aa 0,#330533 100%);
+  background-image: -webkit-gradient(linear,left top,left bottom,from(#8716aa),to(#330533));
+  background-image: linear-gradient(to bottom,#8716aa 0,#330533 100%);
+  background-color: #8716aa;
 }
 
 ul.skin-list li {
@@ -179,4 +150,12 @@ h3 {
   text-align: center;
   border: 1px solid #000;
   padding: 10px;
+}
+
+.progress {
+  margin-bottom: 0;
+}
+
+.progress-bar {
+  min-width: 2em;
 }

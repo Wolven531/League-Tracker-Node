@@ -2,35 +2,25 @@ extends layout
 
 block content
   h1
-    | #{title}, <span class="champ-title">#{champion.title}</span>
+    | #{title}, 
+    span.champ-title
+      | #{champion.title}
   div.champ-header
-    div.champ-image
+    div.champ-image.col-lg-4.col-md-4.col-sm-4.col-xs-4
       img(src="//ddragon.leagueoflegends.com/cdn/" + version + "/img/champion/" + champion.image.full)
-    table.champ-stats
-      tr
-        td
+    div.champ-stats.col-lg-7.col-md-7.col-sm-7.col-xs-7
+      div.progress
+        div.progress-bar.attack(role="progressbar", aria-valuenow=champion.info.attack aria-valuemin="0" aria-valuemax="10", style="width: " + (champion.info.attack * 10) + "%")
           | Attack
-        td
-          div.stat
-            div(class="attack stat-" + champion.info.attack, title=champion.info.attack)
-      tr
-        td
+      div.progress
+        div.progress-bar.defense(role="progressbar", aria-valuenow=champion.info.defense aria-valuemin="0" aria-valuemax="10", style="width: " + (champion.info.defense * 10) + "%")
           | Defense
-        td
-          div.stat
-            div(class="defense stat-" + champion.info.defense, title=champion.info.defense)
-      tr
-        td
+      div.progress
+        div.progress-bar.magic(role="progressbar", aria-valuenow=champion.info.magic aria-valuemin="0" aria-valuemax="10", style="width: " + (champion.info.magic * 10) + "%")
           | Magic
-        td
-          div.stat
-            div(class="magic stat-" + champion.info.magic, title=champion.info.magic)
-      tr
-        td
+      div.progress
+        div.progress-bar.difficulty(role="progressbar", aria-valuenow=champion.info.difficulty aria-valuemin="0" aria-valuemax="10", style="width: " + (champion.info.difficulty * 10) + "%")
           | Difficulty
-        td
-          div.stat
-            div(class="difficulty stat-" + champion.info.difficulty, title=champion.info.difficulty)
   h3
     | Lore
   div
