@@ -1,16 +1,14 @@
 extends layout
 
 block content
-  script(type="text/javascript", src="/scripts/login.js")
-  h1
-    | #{title}
+  script(type="text/javascript", src="/js/login.js")
   div#add_user
-    h2 Add New User
+    h3 Add New User
     form(method="POST", action="/login", id="form_add_user")
       input(type="text", name="league_name", id="league_name")
       br
       input(type="submit", value="Register", id="btn_add_user")
-  h2 Current Users
+  h3 Current Users
   div
     table#current-users
       thead

@@ -1,0 +1,34 @@
+//- tr.champ-row
+//-   td
+//- div.row
+div.col-lg-2.col-md-2.col-sm-3.col-xs-4
+  a(href="/champions/" + champ.id).thumbnail
+    img(src="//ddragon.leagueoflegends.com/cdn/" + version + "/img/champion/" + champ.image.full)
+  //- div.champ-box
+    //- div.champ-title
+    //-   | #{champ.name}, 
+    //-   span.champ-title-short=champ.title
+    //- div.champ-image
+      //- div
+      //-   ul
+      //-   each tag in champ.tags
+      //-     li=tag
+  //- td.champ-img
+  //-   a(href="/champions/" + champ.id)
+  //-     img(src="//-ddragon.leagueoflegends.com/cdn/" + version + "/img/champion/" + champ.image.full)
+  //- td
+  //-   p
+  //-     | #{champ.name}, 
+  //-     span.champ-title=champ.title
+  //- td
+  //-   ul
+  //-     each tag in champ.tags
+  //-       li=tag
+  //- td.passive
+  //-   p.skill-name
+  //-     | #{champ.passive.name}
+  //-   img(src="//-ddragon.leagueoflegends.com/cdn/" + version + "/img/passive/" + champ.passive.image.full)
+  //- each spell in champ.spells
+  //-   td.skill
+  //-     p.skill-name=spell.name
+  //-     img(src="//-ddragon.leagueoflegends.com/cdn/" + version + "/img/spell/" + spell.image.full)

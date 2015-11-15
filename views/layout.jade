@@ -2,16 +2,20 @@ doctype html
 html
   head
     title= title
-    link(rel='stylesheet', href='/stylesheets/style.css')
-    script(type="text/javascript", src="/scripts/jquery-2.1.4.min.js")
+    link(rel='stylesheet', href='/css/bootstrap.min.css')
+    link(rel='stylesheet', href='/css/bootstrap-theme.min.css')
+    link(rel='stylesheet', href='/css/style.css')
+    script(type="text/javascript", src="/js/jquery-2.1.4.min.js")
   body
-    ul#main-nav
-      li
-        a(href="/") Home
-      li
-        a(href="/login") Register
-      li
-        a(href="/champions") Champions
-      li
-        a(href="/items") Items
+    nav.navbar.navbar-default.navbar-fixed-top
+      div.container
+        ul#main-nav
+          li
+            a(href="/") Home
+          li
+            a(href="/login") Register
+          li
+            a(href="/champions") Champions
+          li
+            a(href="/items") Items
     block content

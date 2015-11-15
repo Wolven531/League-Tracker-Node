@@ -1,5 +1,6 @@
 body {
   padding: 50px;
+  padding-top: 70px;
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
 }
 
@@ -11,12 +12,15 @@ body {
   -webkit-margin-start: 0;
   -webkit-margin-end: 0;
   -webkit-padding-start: 0;
+  text-align: center;
 }
 
 #main-nav li {
-  padding: 0;
+  padding: 16px 0;
   margin: 0;
   text-align: center;
+  display: inline-block;
+  width: 15%;
 }
 
 tr.champ-row {
@@ -41,7 +45,21 @@ p.skill-name {
   width: 125px;
 }
 
-.champ-title,
+.champ-box {
+  
+}
+
+.champ-box > div {
+  display: inline-block;
+}
+
+.champ-title {
+  padding: 10px;
+  max-width: 180px;
+  word-break: break-word;
+}
+
+.champ-title-short,
 .skin-title {
   text-transform: capitalize;
 }
@@ -124,7 +142,8 @@ img.champion-skin {
 }
 
 h1,
-h2 {
+h2,
+h3 {
   margin: 10px auto;
   text-align: center;
 }
