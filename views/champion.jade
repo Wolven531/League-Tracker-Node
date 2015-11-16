@@ -3,33 +3,39 @@ extends layout
 block content
   h1
     | #{title}, 
-    span.champ-title
-      | #{champion.title}
-  div.champ-header
-    div.champ-image.col-lg-4.col-md-4.col-sm-4.col-xs-4
-      img(src="//ddragon.leagueoflegends.com/cdn/" + version + "/img/champion/" + champion.image.full)
-    div.champ-stats.col-lg-7.col-md-7.col-sm-7.col-xs-7
-      div.progress
-        div.progress-bar.attack(role="progressbar", aria-valuenow=champion.info.attack aria-valuemin="0" aria-valuemax="10", style="width: " + (champion.info.attack * 10) + "%")
-          | Attack
-      div.progress
-        div.progress-bar.defense(role="progressbar", aria-valuenow=champion.info.defense aria-valuemin="0" aria-valuemax="10", style="width: " + (champion.info.defense * 10) + "%")
-          | Defense
-      div.progress
-        div.progress-bar.magic(role="progressbar", aria-valuenow=champion.info.magic aria-valuemin="0" aria-valuemax="10", style="width: " + (champion.info.magic * 10) + "%")
-          | Magic
-      div.progress
-        div.progress-bar.difficulty(role="progressbar", aria-valuenow=champion.info.difficulty aria-valuemin="0" aria-valuemax="10", style="width: " + (champion.info.difficulty * 10) + "%")
-          | Difficulty
-  h3
-    | Lore
-  div
-    | !{champion.lore}
+    span.champ-title=champion.title
+  div.champ-content
+    div.champ-header
+      div.champ-image.col-lg-4.col-md-4.col-sm-4.col-xs-4
+        img(src="//ddragon.leagueoflegends.com/cdn/" + version + "/img/champion/" + champion.image.full)
+      div.champ-stats.col-lg-7.col-md-7.col-sm-7.col-xs-7
+        div.champ-stat-labels.col-lg-3.col-md-3.col-sm-3.col-xs-3
+          p
+            | Attack
+          p
+            | Defense
+          p
+            | Magic
+          p
+            | Difficulty
+        div.col-lg-9.col-md-9.col-sm-9.col-xs-9
+          div.progress
+            div.progress-bar.attack(role="progressbar", aria-valuenow=champion.info.attack aria-valuemin="0" aria-valuemax="10", style="width: " + (champion.info.attack * 10) + "%", title=champion.info.attack)
+          div.progress
+            div.progress-bar.defense(role="progressbar", aria-valuenow=champion.info.defense aria-valuemin="0" aria-valuemax="10", style="width: " + (champion.info.defense * 10) + "%", title=champion.info.defense)
+          div.progress
+            div.progress-bar.magic(role="progressbar", aria-valuenow=champion.info.magic aria-valuemin="0" aria-valuemax="10", style="width: " + (champion.info.magic * 10) + "%", title=champion.info.magic)
+          div.progress
+            div.progress-bar.difficulty(role="progressbar", aria-valuenow=champion.info.difficulty aria-valuemin="0" aria-valuemax="10", style="width: " + (champion.info.difficulty * 10) + "%", title=champion.info.difficulty)
+    h3
+      | Lore
+    div.champ-lore
+      | !{champion.lore}
   h3
     | Skins
-  ul.skin-list
+  div.champ-skins
     each skin in champion.skins
-      li
-        div.skin-title
-          | #{skin.name}
-        img.champion-skin(src="//ddragon.leagueoflegends.com/cdn/img/champion/splash/" + champion.name + "_" + skin.num + ".jpg")
+      div.col-lg-4.col-md-4.col-sm-4.col-xs-4
+        a.thumbnail
+          span.badge.skin-title=skin.name
+          img.champion-skin(src="//ddragon.leagueoflegends.com/cdn/img/champion/splash/" + champion.name + "_" + skin.num + ".jpg")

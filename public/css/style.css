@@ -39,17 +39,35 @@ p.skill-name {
 
 .skin-title {
   text-transform: capitalize;
+  background-color: #444;
+}
+
+.champ-content,
+.champ-skins {
+  border: 1px solid #000;
+  width: 80%;
+  margin: 0 auto;
+  min-width: 400px;
+  padding: 10px;
 }
 
 .champ-header {
-  border: 1px solid #000;
-  width: 610px;
   height: 122px;
-  margin: 0 auto;
+}
+
+.champ-lore {
+}
+
+.champ-skins {
+  border: none;
 }
 
 .champ-stats {
   margin: 20px 0;
+}
+.champ-stat-labels p {
+  margin-bottom: 3px;
+  font-weight: bold;
 }
 .champ-image {
   text-align: center;
